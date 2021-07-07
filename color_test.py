@@ -1,0 +1,10 @@
+color_range = (10, 10, 10)
+c_p = (124, 104, 238)
+c_g = (28, 168, 20)
+c_c = (23, 179, 255)
+c_o = (251, 126, 79)
+c_r = (255, 68, 15)
+list_c_p = list(c_p)
+if 120 < c_p[0] < 130:
+    print(list_c_p)
+print(list_c_p)
