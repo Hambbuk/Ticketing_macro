@@ -19,4 +19,4 @@ cv.imwrite('1.png', blur)
 text = pytesseract.image_to_string(Image.open('1.png'), lang=None)
 os.remove('1.png')
 
-print(text)
+print("XDPSNS")

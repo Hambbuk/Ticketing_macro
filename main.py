@@ -100,40 +100,61 @@ MB = True
 
 #예매대기 루프 server_time[4]:분. server_time[5]:초
 ###########################################################
-while True:
-    a = driver_time.find_element_by_id('time_area').text
-    b = driver_time.find_element_by_id('msec_area').text
-
-    server_time = re.findall("[0-9]+", a)
-    ##server_time[4]:분. server_time[5]:초
-    #if(server_time[4]=='50' and server_time[5]=='30'):
-    if(int(server_time[5])%10==0): # 10초마다 테스트
-        msec = re.findall("[0-9]", b)
-        if(int(msec[0])>=0):
-            break
+# while True:
+#     a = driver_time.find_element_by_id('time_area').text
+#     b = driver_time.find_element_by_id('msec_area').text
+#
+#     server_time = re.findall("[0-9]+", a)
+#     ##server_time[4]:분. server_time[5]:초
+#     #if(server_time[4]=='50' and server_time[5]=='30'):
+#     #if(int(server_time[4])==00 and int(server_time[5])==2): # 59분 59초
+#     if (int(server_time[5])%10 == 0):  # 10초마다 테스트
+#         msec = re.findall("[0-9]", b)
+#         if(int(msec[0])>=0):
+#             break
 
 ##########################################################
 #driver.find_element_by_xpath('(//*[@id="CellPlayDate"])' + "[" + "20210812" + "]").click()
 
+input()
+
 ################날짜 선택############################################################################################
-driver.find_element_by_xpath('//*[@id="productSide"]/div/div[1]/div[1]/div[2]/div/div/div/div/ul[1]/li[3]').click() # 다음달(8월)
-time.sleep(0.1)
-driver.find_element_by_xpath('(//*[@id="productSide"]/div/div[1]/div[1]/div[2]/div/div/div/div/ul[3]/li[12])').click() # 12일
+is_pass=False
+while(not is_pass):
+    try:
+        print("예매시도")
+        driver.find_element_by_xpath('//*[@id="productSide"]/div/div[1]/div[1]/div[2]/div/div/div/div/ul[1]/li[3]').click() # 다음달(8월)
+        is_pass = True
+        print("예매")
+    except:
+        print("예매대기")
+        pass
+    time.sleep(0.1)
+
+#driver.find_element_by_xpath('//*[@id="productSide"]/div/div[1]/div[1]/div[2]/div/div/div/div/ul[1]/li[3]').click() # 다음달(8월)
+driver.find_element_by_xpath('(//*[@id="productSide"]/div/div[1]/div[1]/div[2]/div/div/div/div/ul[3]/li[5])').click() # 4일
+driver.find_element_by_xpath('//*[@id="productSide"]/div/div[2]/a[1]').click() #예매하기
+
+print('예매')
+
+# time.sleep(0.1)
+# pag.click(277, 523)
+# 닫기
+# time.sleep(0.7)
+# pag.click(671, 333)
+
+# while MB:
+#     resbutton = driver.find_element_by_xpath('//*[@id="productSide"]/div/div[2]/a[1]')
+#     if(resbutton.text=='예매하기'):
+#         print('예매')
+#         resbutton.click()
+#         MB = False
+#         break
+#     else:
+#         print('새로고침')
+#         driver.refresh()
 
 
-while MB:
-    resbutton = driver.find_element_by_xpath('//*[@id="productSide"]/div/div[2]/a[1]')
-    if(resbutton.text=='예매하기'):
-        print('예매')
-        resbutton.click()
-        MB = False
-        break
-    else:
-        print('새로고침')
-        driver.refresh()
-
-
-time.sleep(1)
 # 예매하기 눌러서 새창이 뜨면 포커스를 새창으로 변경
 # driver.switch_to.window(driver.window_handles[1])
 # driver.get_window_position(driver.window_handles[1])
@@ -145,16 +166,27 @@ cnt = 0
 is_captcha = True
 while(is_captcha):
     # 예매하기 눌러서 새창이 뜨면 포커스를 새창으로 변경
+
+    is_pass = False
+    while (not is_pass):
+        try:
+            driver.switch_to.window(driver.window_handles[1])
+            driver.get_window_position(driver.window_handles[1])
+            capture_start()
+            print("패스")
+            is_pass = True
+        except:
+            print("대기")
+            pass
+
     print('start_capthca')
-    driver.switch_to.window(driver.window_handles[1])
-    driver.get_window_position(driver.window_handles[1])
-    
-    capture_start()
+
     #########################OLD_OPENCV##########################################
     # org_img = cv.imread('0.png', cv.IMREAD_GRAYSCALE)
     # # cv.imshow('original', org_img)
     #
-    # threshold, mask = cv.threshold(org_img, 150, 255, cv.THRESH_BINARY)
+    # threshold, mask
+    # = cv.threshold(org_img, 150, 255, cv.THRESH_BINARY)
     #
     # # cv.imshow('binary', mask)
     # blur = cv.medianBlur(mask,3)
@@ -236,10 +268,20 @@ def color(RGB):  # RGB 값을 색깔 문자열로 반환하는 함수
     test = (0,0,0)
     if ((c_p[0]-5 < RGB[0] < c_p[0]+5)
         and (c_p[1]-5 < RGB[1] < c_p[1]+5)
-        and (c_p[2]-5 < RGB[2] < c_p[2]+5)) : return "purple"
-    elif RGB == c_g: return "green"
-    elif RGB == c_c: return "cyan"
-    elif RGB == c_o: return "orange"
+        and (c_p[2]-5 < RGB[2] < c_p[2]+5)):
+        return "purple"
+    elif ((c_g[0]-5 < RGB[0] < c_g[0]+5)
+        and (c_g[1]-5 < RGB[1] < c_g[1]+5)
+        and (c_g[2]-5 < RGB[2] < c_g[2]+5)):
+        return "green"
+    elif ((c_c[0] - 5 < RGB[0] < c_c[0] + 5)
+          and (c_c[1] - 5 < RGB[1] < c_c[1] + 5)
+          and (c_c[2] - 5 < RGB[2] < c_c[2] + 5)):
+        return "cyan"
+    elif ((c_o[0] - 5 < RGB[0] < c_o[0] + 5)
+          and (c_o[1] - 5 < RGB[1] < c_o[1] + 5)
+          and (c_o[2] - 5 < RGB[2] < c_o[2] + 5)):
+        return "orange"
     elif RGB == c_r: return "red2"
     # elif RGB == test: return "test"
     else: return "other"
@@ -258,15 +300,16 @@ while SB==0:
         # time.sleep(0.5)
         ############Z_###################
         screen = ImageGrab.grab() # 화면 캡쳐
-        for j in range(219, 753):
+        for j in range(225, 746):
         #for j in range(0, 992):
-            for i in range(145, 564):
+            for i in range(159, 544):
         #    for i in range(0, 900): 
-                # if i%30==0 and j % 30==0 : pag.click((i,j))
+                #if i%30==0 and j % 30==0 : pag.click((i,j))
                 A = color(screen.getpixel((i,j))) # 가장왼쪽자리
-                if (A == "purple"): # 보라 또는 초록
+                if (A == "purple" or A == "green" or A == "cyan" or A == "orange"): # 보라 또는 초록
+                #if (A == "purple"):  # 보라 또는 초록
                     print(A)
-                    pag.click((i+3,j+3))
+                    pag.click((i,j))
                     pag.click(871, 669) #좌석선택완료
                     if(IsAlert()):
                         SB = 0
