@@ -77,7 +77,6 @@ userPwd.send_keys(Keys.ENTER)
 #driver.get('http://ticket.interpark.com/Ticket/Goods/GoodsInfo.asp?GoodsCode=' + '21004910')
 # 헤드윅
 driver.get('http://ticket.interpark.com/Ticket/Goods/GoodsInfo.asp?GoodsCode=' + '21005689')
-#driver.get('http://ticket.interpark.com/Ticket/Goods/GoodsInfo.asp?GoodsCode=' + '21005562')
 # 마리앙투아네트 테스트
 #driver.get('http://ticket.interpark.com/Ticket/Goods/GoodsInfo.asp?GoodsCode=' + '21004304')
 
@@ -123,7 +122,7 @@ is_pass=False
 while(not is_pass):
     try:
         print("예매시도")
-        driver.find_element_by_xpath('//*[@id="productSide"]/div/div[1]/div[1]/div[2]/div/div/div/div/ul[1]/li[3]').click() # 다음달(8월)
+        driver.find_element_by_xpath('(//*[@id="productSide"]/div/div[1]/div[1]/div[2]/div/div/div/div/ul[3]/li[13])').click()  # 4일
         is_pass = True
         print("예매")
     except:
@@ -132,10 +131,9 @@ while(not is_pass):
     time.sleep(0.1)
 
 #driver.find_element_by_xpath('//*[@id="productSide"]/div/div[1]/div[1]/div[2]/div/div/div/div/ul[1]/li[3]').click() # 다음달(8월)
-driver.find_element_by_xpath('(//*[@id="productSide"]/div/div[1]/div[1]/div[2]/div/div/div/div/ul[3]/li[5])').click() # 4일
+#driver.find_element_by_xpath('(//*[@id="productSide"]/div/div[1]/div[1]/div[2]/div/div/div/div/ul[3]/li[13])').click() # 4일
 driver.find_element_by_xpath('//*[@id="productSide"]/div/div[2]/a[1]').click() #예매하기
 
-print('예매')
 
 # time.sleep(0.1)
 # pag.click(277, 523)
@@ -164,21 +162,26 @@ print('예매')
                   #catcha#
 cnt = 0
 is_captcha = True
+input()
 while(is_captcha):
     # 예매하기 눌러서 새창이 뜨면 포커스를 새창으로 변경
 
-    is_pass = False
-    while (not is_pass):
-        try:
-            driver.switch_to.window(driver.window_handles[1])
-            driver.get_window_position(driver.window_handles[1])
-            capture_start()
-            print("패스")
-            is_pass = True
-        except:
-            print("대기")
-            pass
+    # is_pass = False
+    # while (not is_pass):
+    #     try:
+    #         driver.switch_to.window(driver.window_handles[1])
+    #         driver.get_window_position(driver.window_handles[1])
+    #         capture_start()
+    #         print("패스")
+    #         is_pass = True
+    #     except:
+    #         print("대기")
+    #         pass
 
+
+    driver.switch_to.window(driver.window_handles[1])
+    driver.get_window_position(driver.window_handles[1])
+    capture_start()
     print('start_capthca')
 
     #########################OLD_OPENCV##########################################
@@ -225,6 +228,7 @@ while(is_captcha):
     # Invert image for result
     result = 255 - opening
     cv.imwrite('1.png', result)
+
     ##############################################################################################
     text = pytesseract.image_to_string(result
                                        , config = "-c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -233,6 +237,7 @@ while(is_captcha):
     driver.find_element_by_xpath('// *[ @ id = "txtCaptcha"]').send_keys(text)
     # pag.click(441, 535)
     # pag.write(text)
+
     print(text)
 
 
@@ -300,22 +305,26 @@ while SB==0:
         # time.sleep(0.5)
         ############Z_###################
         screen = ImageGrab.grab() # 화면 캡쳐
-        for j in range(225, 746):
+        for j in range(225, 746, 8):
         #for j in range(0, 992):
-            for i in range(159, 544):
+            for i in range(159, 544, 9):
         #    for i in range(0, 900): 
                 #if i%30==0 and j % 30==0 : pag.click((i,j))
                 A = color(screen.getpixel((i,j))) # 가장왼쪽자리
-                if (A == "purple" or A == "green" or A == "cyan" or A == "orange"): # 보라 또는 초록
+                if (A == "purple"): # 보라 또는 초록
                 #if (A == "purple"):  # 보라 또는 초록
                     print(A)
                     pag.click((i,j))
-                    pag.click(871, 669) #좌석선택완료
-                    if(IsAlert()):
-                        SB = 0
-                        screen = ImageGrab.grab()
-                    else: SB=1
-                if SB==1:
+                    cnt = cnt + 1
+                    if cnt == 2:
+                        pag.click(747, 674) #좌석선택완료
+                        if(IsAlert()):
+                            SB = 0
+                            pag.click(849, 704)
+                            screen = ImageGrab.grab()
+                            cnt = 0
+                        else: SB=1
+                if SB==1 and cnt == 2:
                     break
             if SB==1:
                 break
